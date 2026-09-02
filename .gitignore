@@ -105,3 +105,9 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# --- Añadido para este proyecto ---
+# La plantilla de GitHub cubre *.sln pero no el formato nuevo de Visual Studio
+*.slnx
+# Respaldo temporal del .gitattributes, no forma parte del proyecto
+.gitattributes.bak
