@@ -103,32 +103,46 @@ public class GeneradorSelva : EditorWindow
     /// <summary>Orquesta la generacion completa, paso por paso.</summary>
     private void Generar()
     {
-        TerrainData datos = CrearDatosDeTerreno();
+        // Se destruye primero el terreno anterior para que nada en la escena
+        // quede apuntando al archivo mientras se reemplaza.
+        GameObject anterior = GameObject.Find("TerrenoSelva");
+        if (anterior != null)
+        {
+            DestroyImmediate(anterior);
+        }
 
-        AplicarRelieve(datos);
-        PintarSuelo(datos);
-        PlantarArboles(datos);
-        SembrarMatorral(datos);
-
-        ColocarEnEscena(datos);
-
-        AssetDatabase.SaveAssets();
-        Debug.Log("Selva generada: " + ladoTerreno + " m de lado, " + cantidadArboles + " arboles.");
-    }
-
-    /// <summary>Crea el asset de TerrainData con las resoluciones y el tamano elegidos.</summary>
-    private TerrainData CrearDatosDeTerreno()
-    {
+        // El TerrainData se arma COMPLETO en memoria y recien despues se guarda
+        // como asset. Antes se creaba el archivo vacio y se rellenaba a
+        // continuacion, y la reimportacion del archivo recien creado podia pisar
+        // lo que ya se habia escrito en memoria.
         TerrainData datos = new TerrainData();
         datos.heightmapResolution = 513;
         datos.alphamapResolution = 512;
         datos.SetDetailResolution(512, 16);
         datos.size = new Vector3(ladoTerreno, alturaMaxima, ladoTerreno);
 
+        AplicarRelieve(datos);
+        PintarSuelo(datos);
+        PlantarArboles(datos);
+        SembrarMatorral(datos);
+
+        GuardarComoAsset(datos);
+        ColocarEnEscena(datos);
+
+        EditorUtility.SetDirty(datos);
+        AssetDatabase.SaveAssets();
+
+        Debug.Log("Selva generada: " + ladoTerreno + " m de lado, "
+            + datos.treeInstanceCount + " arboles realmente plantados, "
+            + "altura del terreno " + datos.size.y + " m.");
+    }
+
+    /// <summary>Guarda el TerrainData ya construido, reemplazando el archivo anterior.</summary>
+    private void GuardarComoAsset(TerrainData datos)
+    {
         const string ruta = "Assets/Terreno/TerrenoSelva.asset";
         AssetDatabase.DeleteAsset(ruta);
         AssetDatabase.CreateAsset(datos, ruta);
-        return datos;
     }
 
     // ------------------------------------------------------------------ paso 1
@@ -152,6 +166,30 @@ public class GeneradorSelva : EditorWindow
         }
 
         datos.SetHeights(0, 0, alturas);
+
+        // Diagnostico: compara lo calculado contra lo que el TerrainData devuelve
+        // despues de escribirlo. Si no coinciden, el problema esta en la escritura
+        // y no en el ruido.
+        float minCalculado = 1f;
+        float maxCalculado = 0f;
+        foreach (float valor in alturas)
+        {
+            if (valor < minCalculado) minCalculado = valor;
+            if (valor > maxCalculado) maxCalculado = valor;
+        }
+
+        float[,] relectura = datos.GetHeights(0, 0, resolucion, resolucion);
+        float minLeido = 1f;
+        float maxLeido = 0f;
+        foreach (float valor in relectura)
+        {
+            if (valor < minLeido) minLeido = valor;
+            if (valor > maxLeido) maxLeido = valor;
+        }
+
+        Debug.Log(string.Format(
+            "Relieve: calculado min {0:F4} max {1:F4} | releido min {2:F4} max {3:F4} | resolucion {4}",
+            minCalculado, maxCalculado, minLeido, maxLeido, resolucion));
     }
 
     /// <summary>Suma varias capas de Perlin, cada una mas fina y con menos peso que la anterior.</summary>
@@ -332,24 +370,28 @@ public class GeneradorSelva : EditorWindow
     /// <summary>Reemplaza el terreno anterior por el nuevo y ajusta las distancias de dibujado.</summary>
     private void ColocarEnEscena(TerrainData datos)
     {
-        GameObject anterior = GameObject.Find("TerrenoSelva");
-        if (anterior != null)
-        {
-            DestroyImmediate(anterior);
-        }
-
+        // El terreno anterior ya se destruyo al principio de Generar().
         GameObject objeto = Terrain.CreateTerrainGameObject(datos);
         objeto.name = "TerrenoSelva";
         objeto.transform.position = new Vector3(-ladoTerreno * 0.5f, 0f, -ladoTerreno * 0.5f);
 
         Terrain terreno = objeto.GetComponent<Terrain>();
-        terreno.detailObjectDistance = 90f;
-        terreno.treeBillboardDistance = 70f;
-        terreno.treeDistance = 350f;
+        terreno.detailObjectDistance = 150f;
+        // Los billboards de arbol necesitan el shader Nature/Soft Occlusion, que es
+        // del pipeline Built-in y no existe en URP: por eso Unity advierte al
+        // registrar cada prototipo. En vez de usar billboards rotos, se dibujan
+        // siempre como malla igualando ambas distancias. Si el rendimiento sufre,
+        // se baja treeDistance (menos arboles a lo lejos), no se reactivan.
+        terreno.treeDistance = ladoTerreno * 1.5f;
+        terreno.treeBillboardDistance = terreno.treeDistance;
         terreno.heightmapPixelError = 8f;
 
         Undo.RegisterCreatedObjectUndo(objeto, "Generar selva");
-        Selection.activeGameObject = objeto;
+
+        // Cambiar la seleccion durante el propio evento OnGUI del boton
+        // desbalancea la pila de GUILayout (error "EndLayoutGroup" en consola).
+        // Se difiere al frame siguiente con delayCall para evitarlo.
+        EditorApplication.delayCall += () => Selection.activeGameObject = objeto;
     }
 
     /// <summary>Devuelve solo los modelos realmente asignados en la ventana.</summary>

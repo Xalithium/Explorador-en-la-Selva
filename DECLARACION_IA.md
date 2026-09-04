@@ -35,6 +35,15 @@ parte del juego entregado, sí se generaron con asistencia de IA. Están identif
 | Configuración de `.gitattributes` | Asistida por IA. Se desactivó Git LFS porque estaba declarado pero no funcionaba: los binarios del primer commit se guardaron crudos en vez de como punteros. |
 | `README.md` y este archivo | Redactados con asistencia de IA a partir del contenido real del proyecto. |
 
+### 4 de septiembre de 2026 · Terreno y materiales
+
+| Elemento | Grado de asistencia |
+|---|---|
+| Generación del terreno en Unity | Ejecutada por el autor. Los parámetros (500 m de lado, 3000 árboles, especies usadas) los eligió él. |
+| Depuración de `GeneradorSelva.cs` | **Corregido con IA.** Tres fallas: el terreno salía plano al regenerar porque el asset se creaba vacío y se rellenaba después, un error de consola por cambiar la selección durante `OnGUI`, y un mensaje de log que informaba árboles pedidos en vez de plantados. El diagnóstico se hizo con evidencia, midiendo el contenido real del archivo generado. |
+| Distancia de billboard de los árboles | **Decidida con IA.** Se igualó a la distancia de dibujado porque los billboards de terreno requieren el shader `Nature/Soft Occlusion`, que no existe en URP. Las advertencias de consola que quedan son una limitación conocida del motor, no un error del proyecto. |
+| Materiales de los árboles (`Assets/Arte/Naturaleza/Materiales/`) | **Asignados con IA** editando los archivos de material: mapa base, normal map y recorte alfa en las hojas. Las texturas venían en el pack de Quaternius, no se generó ninguna. El autor hizo la prueba que identificó el problema. |
+
 ---
 
 *Este registro se actualiza en cada jornada de trabajo.*
