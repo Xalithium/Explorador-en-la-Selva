@@ -12,8 +12,11 @@ a medida que el trabajo avanza, no reconstruido al final, para que refleje lo qu
 
 ## Criterio general
 
-El **código de juego** de `Assets/Scripts/` lo escribe el autor. La IA se usa para explicar
-enfoques, resolver dudas puntuales y revisar el resultado, no para generar esos archivos.
+El **código de juego** de `Assets/Scripts/` lo escribe el autor en su editor, línea por línea,
+siguiendo la explicación de la IA sobre qué hace cada instrucción y por qué. No son archivos
+generados y pegados: el autor los tecleó, los probó por partes y puede explicar cada bloque.
+El diseño y los valores iniciales los propuso la IA; las decisiones de comportamiento las tomó
+el autor y están indicadas caso a caso más abajo.
 
 La **herramienta de editor** y las **utilidades de apoyo**, que son código mecánico y no forman
 parte del juego entregado, sí se generaron con asistencia de IA. Están identificadas abajo.
@@ -43,6 +46,16 @@ parte del juego entregado, sí se generaron con asistencia de IA. Están identif
 | Depuración de `GeneradorSelva.cs` | **Corregido con IA.** Tres fallas: el terreno salía plano al regenerar porque el asset se creaba vacío y se rellenaba después, un error de consola por cambiar la selección durante `OnGUI`, y un mensaje de log que informaba árboles pedidos en vez de plantados. El diagnóstico se hizo con evidencia, midiendo el contenido real del archivo generado. |
 | Distancia de billboard de los árboles | **Decidida con IA.** Se igualó a la distancia de dibujado porque los billboards de terreno requieren el shader `Nature/Soft Occlusion`, que no existe en URP. Las advertencias de consola que quedan son una limitación conocida del motor, no un error del proyecto. |
 | Materiales de los árboles (`Assets/Arte/Naturaleza/Materiales/`) | **Asignados con IA** editando los archivos de material: mapa base, normal map y recorte alfa en las hojas. Las texturas venían en el pack de Quaternius, no se generó ninguna. El autor hizo la prueba que identificó el problema. |
+
+### 4 de septiembre de 2026 · Movimiento del personaje
+
+| Elemento | Grado de asistencia |
+|---|---|
+| `Assets/Scripts/MovimientoJugador.cs` | **Escrito por el autor siguiendo explicación paso a paso de la IA.** Se construyó por capas, probando cada una: primero `Update`, después la lectura de entrada, el giro, la gravedad, el salto, el sprint y por último el Animator. La IA explicó cada instrucción y propuso los valores; el autor los ajustó jugando. |
+| `Assets/Scripts/CamaraSeguidora.cs` | **Escrito por el autor con el mismo método.** |
+| Esquema de control (personaje gira sobre su eje, cámara detrás) | **Decisión del autor.** La IA había propuesto el esquema con cámara libre controlada por mouse; el autor propuso el de tipo carreras y lo eligió por simplicidad y por ajustarse al tiempo disponible. |
+| Ajuste de escala de los árboles y distancia de sombras | **Aplicados con IA.** Se agregó un control de escala al generador y se subió la distancia de sombras de URP de 50 a 150 metros, porque las sombras aparecían de golpe al acercarse. |
+| Configuración del Animator (blend tree, parámetros y transiciones) | Armada por el autor en el editor de Unity, siguiendo los pasos indicados por la IA. |
 
 ---
 

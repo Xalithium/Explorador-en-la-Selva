@@ -39,8 +39,16 @@ El proyecto mezcla inglés y español de forma deliberada, según tres reglas:
 | Archivo | Qué hace |
 |---|---|
 | `Assets/Editor/GeneradorSelva.cs` | Ventana de editor que construye el terreno completo: relieve por ruido Perlin de varias octavas con un valle central navegable, mezcla de tres capas de textura según altura y pendiente, distribución de árboles evitando pendientes fuertes y el claro central, y siembra de matorral como capa de detalle. Se abre desde el menú `Herramientas > Generador de Selva`. |
+| `Assets/Scripts/MovimientoJugador.cs` | Componente del jugador. Lee el Input System y resuelve todo el movimiento: girar sobre el propio eje con A y D, avanzar y retroceder con W y S, correr con Shift (no hacia atrás), y saltar con espacio. Aplica la gravedad manualmente, porque el `CharacterController` no la incluye, y alimenta los parámetros `Velocidad` y `EnElSuelo` del Animator. |
+| `Assets/Scripts/CamaraSeguidora.cs` | Componente de la cámara. La mantiene siempre detrás del jugador con un desfase rotado según hacia dónde mira, y la acerca a esa posición de forma progresiva para que el seguimiento no sea rígido. Corre en `LateUpdate` para leer la posición del jugador ya actualizada y evitar el temblor. |
 
 Esta tabla se completa a medida que se escriben los scripts de juego.
+
+**Esquema de control.** El personaje gira sobre su eje y la cámara lo sigue por detrás, como en
+los juegos de carreras. Se eligió así en vez del esquema moderno con cámara libre porque este
+último exige que el mouse controle la cámara: si la cámara se ancla al personaje y además el
+movimiento se calcula relativo a ella, el marco de referencia depende de lo que se quiere
+controlar y el personaje gira en círculos al mantener una dirección lateral.
 
 > **Nota sobre `Assets/InputSystem_Actions.cs`.** Ese archivo tiene unas 1800 líneas y no
 > está escrito a mano: lo genera Unity automáticamente a partir de

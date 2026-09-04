@@ -31,6 +31,7 @@ public class GeneradorSelva : EditorWindow
     private GameObject arbolB;
     private GameObject arbolC;
     private int cantidadArboles = 700;
+    private float escalaArboles = 2f;
     private float pendienteMaxArboles = 28f;
     private float radioClaroCentral = 25f;
 
@@ -75,6 +76,7 @@ public class GeneradorSelva : EditorWindow
         arbolB = (GameObject)EditorGUILayout.ObjectField("Arbol B", arbolB, typeof(GameObject), false);
         arbolC = (GameObject)EditorGUILayout.ObjectField("Arbol C", arbolC, typeof(GameObject), false);
         cantidadArboles = EditorGUILayout.IntSlider("Cantidad de arboles", cantidadArboles, 0, 3000);
+        escalaArboles = EditorGUILayout.Slider("Escala de los arboles", escalaArboles, 0.5f, 4f);
         pendienteMaxArboles = EditorGUILayout.Slider("Pendiente maxima", pendienteMaxArboles, 5f, 60f);
         radioClaroCentral = EditorGUILayout.Slider("Claro central libre (m)", radioClaroCentral, 0f, 120f);
         matorral = (GameObject)EditorGUILayout.ObjectField("Matorral (detalle)", matorral, typeof(GameObject), false);
@@ -318,8 +320,8 @@ public class GeneradorSelva : EditorWindow
             TreeInstance arbol = new TreeInstance();
             arbol.position = new Vector3(x, datos.GetInterpolatedHeight(x, y) / datos.size.y, y);
             arbol.prototypeIndex = Random.Range(0, prototipos.Length);
-            arbol.widthScale = Random.Range(0.8f, 1.3f);
-            arbol.heightScale = Random.Range(0.8f, 1.4f);
+            arbol.widthScale = escalaArboles * Random.Range(0.8f, 1.3f);
+            arbol.heightScale = escalaArboles * Random.Range(0.8f, 1.4f);
             arbol.rotation = Random.Range(0f, Mathf.PI * 2f);
             arbol.color = Color.white;
             arbol.lightmapColor = Color.white;
