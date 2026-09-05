@@ -111,3 +111,5 @@ InitTestScene*.unity*
 *.slnx
 # Respaldo temporal del .gitattributes, no forma parte del proyecto
 .gitattributes.bak
+# Bocetos temporales del asistente; no forman parte del proyecto Unity
+.superpowers/

@@ -57,6 +57,16 @@ parte del juego entregado, sí se generaron con asistencia de IA. Están identif
 | Ajuste de escala de los árboles y distancia de sombras | **Aplicados con IA.** Se agregó un control de escala al generador y se subió la distancia de sombras de URP de 50 a 150 metros, porque las sombras aparecían de golpe al acercarse. |
 | Configuración del Animator (blend tree, parámetros y transiciones) | Armada por el autor en el editor de Unity, siguiendo los pasos indicados por la IA. |
 
+### 4 de septiembre de 2026 · Interacción con cofres y primera pista
+
+| Elemento | Grado de asistencia |
+|---|---|
+| Colliders de árboles, cofres y roca de destino | Configurados por el autor siguiendo explicaciones de IA sobre la elección entre `Capsule Collider`, `Box Collider` y `Mesh Collider`. El autor ajustó visualmente sus tamaños y comprobó las colisiones jugando. |
+| `Assets/Scripts/CofreInteractivo.cs` | **Escrito por el autor siguiendo explicación paso a paso de la IA.** Se implementaron y probaron progresivamente la detección de proximidad, la interacción con la tecla E, la apertura gradual de la tapa, la pausa al mostrar el mapa y el reemplazo del cofre lleno por el vacío. |
+| Interfaz provisional del mapa | Creada por el autor en Unity con orientación de IA. Por ahora utiliza un rectángulo blanco sobre un fondo oscuro; el mapa definitivo todavía no ha sido generado. |
+| Diseño de la ruta de exploración | Diseñado mediante conversación con IA y decisiones del autor. Se eligió un croquis parcial combinado con un indicador numérico de distancia, sin flecha direccional. La primera pista conducirá desde el cofre hasta una roca interactuable situada en una colina. |
+| `MaterialPiedraSelva` y `RocaDestino` | Material y objeto configurados por el autor con asistencia de IA. `Rocks_Diffuse.png` pertenece al pack de Quaternius y no fue generada por IA. La IA ayudó a identificar que se trata del atlas asociado al material `Rocks` del modelo. |
+
 ---
 
 *Este registro se actualiza en cada jornada de trabajo.*
